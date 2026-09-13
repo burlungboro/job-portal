@@ -100,7 +100,48 @@ const getMyApplications = async (req, res) => {
 	}
 };
 
+const getApplicationsForRecruiter = async (req, res) => {
+	const recruiter_id = req.user.id;
+
+	try {
+		const [applications] = await db.execute(
+			`SELECT
+				ja.id AS application_id,
+				ja.candidate_id,
+				u.name AS candidate_name,
+				u.email AS candidate_email,
+				ja.job_id,
+				j.title AS job_title,
+				c.id AS company_id,
+				c.name AS company_name,
+				ja.status,
+				ja.cover_letter,
+				ja.resume_url,
+				ja.applied_at,
+				ja.updated_at
+			 FROM job_applications ja
+			 JOIN jobs j ON ja.job_id = j.id
+			 JOIN companies c ON j.company_id = c.id
+			 JOIN users u ON ja.candidate_id = u.id
+			 WHERE j.recruiter_id = ?
+			 ORDER BY ja.applied_at DESC`,
+			[recruiter_id]
+		);
+
+		return res.status(200).json({
+			applications,
+		});
+	} catch (error) {
+		console.error("Get recruiter applications error:", error);
+
+		return res.status(500).json({
+			message: "Server error while retrieving recruiter applications",
+		});
+	}
+};
+
 module.exports = {
 	applyForJob,
 	getMyApplications,
+	getApplicationsForRecruiter,
 };
