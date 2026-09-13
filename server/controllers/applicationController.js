@@ -140,8 +140,66 @@ const getApplicationsForRecruiter = async (req, res) => {
 	}
 };
 
+
+const updateApplicationStatus = async (req, res) => {
+	const applicationId = req.params.id;
+	const recruiterId = req.user.id;
+	const { status } = req.body;
+
+	const allowedStatuses = [
+		"SUBMITTED",
+		"REVIEWING",
+		"REJECTED",
+		"ACCEPTED",
+	];
+
+	if (!status || !allowedStatuses.includes(status)) {
+		return res.status(400).json({
+			message: "Invalid application status",
+		});
+	}
+
+	try {
+		const [applications] = await db.execute(
+			`SELECT ja.id
+			 FROM job_applications ja
+			 JOIN jobs j ON ja.job_id = j.id
+			 WHERE ja.id = ? AND j.recruiter_id = ?`,
+			[applicationId, recruiterId]
+		);
+
+		if (applications.length === 0) {
+			return res.status(404).json({
+				message: "Application not found",
+			});
+		}
+
+		await db.execute(
+			`UPDATE job_applications
+			 SET status = ?
+			 WHERE id = ?`,
+			[status, applicationId]
+		);
+
+		return res.status(200).json({
+			message: "Application status updated successfully",
+			application: {
+				id: Number(applicationId),
+				status,
+			},
+		});
+	} catch (error) {
+		console.error("Update application status error:", error);
+
+		return res.status(500).json({
+			message: "Server error while updating application status",
+		});
+	}
+};
+
 module.exports = {
 	applyForJob,
 	getMyApplications,
 	getApplicationsForRecruiter,
+	updateApplicationStatus,
 };

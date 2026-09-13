@@ -7,6 +7,7 @@ const {
     applyForJob,
     getMyApplications,
     getApplicationsForRecruiter,
+    updateApplicationStatus,
 } = require("../controllers/applicationController");
 
 const router = express.Router();
@@ -30,6 +31,13 @@ router.get(
     authMiddleware,
     requireRole("RECRUITER"),
     getApplicationsForRecruiter
+);
+
+router.put(
+    "/:id/status",
+    authMiddleware,
+    requireRole("RECRUITER"),
+    updateApplicationStatus
 );
 
 module.exports = router;
