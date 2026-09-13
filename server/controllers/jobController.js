@@ -109,7 +109,30 @@ const getJobs = async (req, res) => {
 	}
 };
 
+const getJobById = async (req, res) => {
+	try {
+		const [jobs] = await db.execute("SELECT * FROM jobs WHERE id = ?", [
+			req.params.id,
+		]);
+
+		if (jobs.length === 0) {
+			return res.status(404).json({
+				message: "Job not found",
+			});
+		}
+
+		return res.status(200).json(jobs[0]);
+	} catch (error) {
+		console.error("Get job by ID error:", error);
+
+		return res.status(500).json({
+			message: "Server error while retrieving job",
+		});
+	}
+};
+
 module.exports = {
 	createJob,
 	getJobs,
+	getJobById,
 };
