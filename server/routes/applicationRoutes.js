@@ -1,9 +1,16 @@
 const express = require("express");
 const { authMiddleware } = require("../middleware/authMiddleware");
 const { requireRole } = require("../middleware/roleMiddleware");
-const { applyForJob } = require("../controllers/applicationController");
+const { applyForJob, getMyApplications } = require("../controllers/applicationController");
 
 const router = express.Router();
+
+router.get(
+	"/",
+	authMiddleware,
+	requireRole("CANDIDATE"),
+	getMyApplications
+);
 
 router.post(
 	"/",
