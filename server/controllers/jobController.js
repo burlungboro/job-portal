@@ -131,8 +131,120 @@ const getJobById = async (req, res) => {
 	}
 };
 
+const updateJob = async (req, res) => {
+	const {
+		company_id,
+		title,
+		description,
+		location,
+		employment_type,
+		salary_min,
+		salary_max,
+		experience_required,
+		skills_required,
+		application_deadline,
+		status,
+	} = req.body;
+
+	if (
+		employment_type !== undefined &&
+		!ALLOWED_EMPLOYMENT_TYPES.includes(employment_type)
+	) {
+		return res.status(400).json({
+			message: "Invalid employment_type",
+		});
+	}
+
+	if (status !== undefined && !ALLOWED_STATUSES.includes(status)) {
+		return res.status(400).json({
+			message: "Invalid status",
+		});
+	}
+
+	const jobId = req.params.id;
+	const recruiterId = req.user.id;
+
+	try {
+		const [existingJobs] = await db.execute(
+			"SELECT * FROM jobs WHERE id = ? AND recruiter_id = ?",
+			[jobId, recruiterId]
+		);
+
+		if (existingJobs.length === 0) {
+			return res.status(404).json({
+				message: "Job not found",
+			});
+		}
+
+		const existingJob = existingJobs[0];
+		const updatedJobData = {
+			company_id: company_id ?? existingJob.company_id,
+			title: title ?? existingJob.title,
+			description: description ?? existingJob.description,
+			location: location ?? existingJob.location,
+			employment_type:
+				employment_type ?? existingJob.employment_type,
+			salary_min: salary_min ?? existingJob.salary_min,
+			salary_max: salary_max ?? existingJob.salary_max,
+			experience_required:
+				experience_required ?? existingJob.experience_required,
+			skills_required: skills_required ?? existingJob.skills_required,
+			application_deadline:
+				application_deadline ?? existingJob.application_deadline,
+			status: status ?? existingJob.status,
+		};
+
+		await db.execute(
+			`UPDATE jobs SET
+				company_id = ?,
+				title = ?,
+				description = ?,
+				location = ?,
+				employment_type = ?,
+				salary_min = ?,
+				salary_max = ?,
+				experience_required = ?,
+				skills_required = ?,
+				application_deadline = ?,
+				status = ?
+			 WHERE id = ? AND recruiter_id = ?`,
+			[
+				updatedJobData.company_id,
+				updatedJobData.title,
+				updatedJobData.description,
+				updatedJobData.location,
+				updatedJobData.employment_type,
+				updatedJobData.salary_min,
+				updatedJobData.salary_max,
+				updatedJobData.experience_required,
+				updatedJobData.skills_required,
+				updatedJobData.application_deadline,
+				updatedJobData.status,
+				jobId,
+				recruiterId,
+			]
+		);
+
+		const [updatedJobs] = await db.execute("SELECT * FROM jobs WHERE id = ?", [
+			jobId,
+		]);
+
+		return res.status(200).json({
+			message: "Job updated successfully",
+			job: updatedJobs[0],
+		});
+	} catch (error) {
+		console.error("Update job error:", error);
+
+		return res.status(500).json({
+			message: "Server error while updating job",
+		});
+	}
+};
+
 module.exports = {
 	createJob,
 	getJobs,
 	getJobById,
+	updateJob,
 };
