@@ -242,9 +242,38 @@ const updateJob = async (req, res) => {
 	}
 };
 
+const deleteJob = async (req, res) => {
+	const jobId = req.params.id;
+	const recruiterId = req.user.id;
+
+	try {
+		const [result] = await db.execute(
+			"DELETE FROM jobs WHERE id = ? AND recruiter_id = ?",
+			[jobId, recruiterId]
+		);
+
+		if (result.affectedRows === 0) {
+			return res.status(404).json({
+				message: "Job not found",
+			});
+		}
+
+		return res.status(200).json({
+			message: "Job deleted successfully",
+		});
+	} catch (error) {
+		console.error("Delete job error:", error);
+
+		return res.status(500).json({
+			message: "Server error while deleting job",
+		});
+	}
+};
+
 module.exports = {
 	createJob,
 	getJobs,
 	getJobById,
 	updateJob,
+	deleteJob,
 };
