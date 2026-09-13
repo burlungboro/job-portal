@@ -93,6 +93,23 @@ const createJob = async (req, res) => {
 	}
 };
 
+const getJobs = async (req, res) => {
+	try {
+		const [jobs] = await db.execute(
+			"SELECT * FROM jobs ORDER BY created_at DESC"
+		);
+
+		return res.status(200).json(jobs);
+	} catch (error) {
+		console.error("Get jobs error:", error);
+
+		return res.status(500).json({
+			message: "Server error while retrieving jobs",
+		});
+	}
+};
+
 module.exports = {
 	createJob,
+	getJobs,
 };
