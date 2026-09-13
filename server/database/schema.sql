@@ -17,3 +17,54 @@ CREATE TABLE companies (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+CREATE TABLE candidate_profiles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    phone VARCHAR(20),
+    location VARCHAR(150),
+    headline VARCHAR(200),
+    bio TEXT,
+    profile_picture VARCHAR(255),
+    resume_url VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE recruiter_profiles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    company_id INT,
+    phone VARCHAR(20),
+    job_title VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (company_id) REFERENCES companies(id)
+        ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE jobs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    recruiter_id INT NOT NULL,
+    company_id INT NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL,
+    location VARCHAR(150),
+    employment_type ENUM('FULL_TIME', 'PART_TIME', 'INTERNSHIP', 'CONTRACT') NOT NULL DEFAULT 'FULL_TIME',
+    salary_min DECIMAL(10, 2),
+    salary_max DECIMAL(10, 2),
+    experience_required VARCHAR(100),
+    skills_required TEXT,
+    application_deadline DATE,
+    status ENUM('DRAFT', 'OPEN', 'CLOSED') NOT NULL DEFAULT 'OPEN',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (recruiter_id) REFERENCES users(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (company_id) REFERENCES companies(id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
