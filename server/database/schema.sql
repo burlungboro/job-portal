@@ -68,3 +68,19 @@ CREATE TABLE jobs (
     FOREIGN KEY (company_id) REFERENCES companies(id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE job_applications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    candidate_id INT NOT NULL,
+    job_id INT NOT NULL,
+    status ENUM('SUBMITTED', 'REVIEWING', 'REJECTED', 'ACCEPTED') NOT NULL DEFAULT 'SUBMITTED',
+    cover_letter TEXT,
+    resume_url VARCHAR(255),
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE (candidate_id, job_id),
+    FOREIGN KEY (candidate_id) REFERENCES users(id)
+        ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (job_id) REFERENCES jobs(id)
+        ON DELETE RESTRICT ON UPDATE CASCADE
+);
