@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Jobs from "./pages/Jobs";
+import JobDetails from "./pages/JobDetails";
 import CandidateDashboard from "./pages/CandidateDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -16,6 +17,14 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <Jobs />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/jobs/:id"
+                    element={
+                        <ProtectedRoute>
+                            <JobDetails />
                         </ProtectedRoute>
                     }
                 />
