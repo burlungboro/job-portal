@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CandidateDashboard = () => {
     const navigate = useNavigate();
@@ -48,14 +48,16 @@ const CandidateDashboard = () => {
                 </section>
 
                 <section className="grid gap-6 md:grid-cols-3">
-                    <article className="rounded-lg bg-white p-6 shadow-md">
-                        <h2 className="mb-2 text-xl font-semibold text-gray-800">
-                            Browse Jobs
-                        </h2>
-                        <p className="text-gray-600">
-                            Explore available job opportunities.
-                        </p>
-                    </article>
+                    <Link to="/jobs" className="block">
+                        <article className="rounded-lg bg-white p-6 shadow-md">
+                            <h2 className="mb-2 text-xl font-semibold text-gray-800">
+                                Browse Jobs
+                            </h2>
+                            <p className="text-gray-600">
+                                Explore available job opportunities.
+                            </p>
+                        </article>
+                    </Link>
 
                     <article className="rounded-lg bg-white p-6 shadow-md">
                         <h2 className="mb-2 text-xl font-semibold text-gray-800">
