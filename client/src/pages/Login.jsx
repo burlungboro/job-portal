@@ -26,6 +26,8 @@ const Login = () => {
 
             if (user.role === "CANDIDATE") {
                 navigate("/candidate");
+            } else if (user.role === "RECRUITER") {
+                navigate("/recruiter");
             }
         } catch (error) {
             console.error("Login failed:", error);

@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
 import CandidateDashboard from "./pages/CandidateDashboard";
+import RecruiterDashboard from "./pages/RecruiterDashboard";
 import MyApplications from "./pages/MyApplications";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -34,6 +35,14 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <CandidateDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/recruiter"
+                    element={
+                        <ProtectedRoute>
+                            <RecruiterDashboard />
                         </ProtectedRoute>
                     }
                 />
