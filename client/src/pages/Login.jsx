@@ -16,7 +16,10 @@ const Login = () => {
                 password,
             });
 
-            console.log("Login successful:", response.data);
+            const { token, user } = response.data;
+
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
 
             setMessage("Login successful!");
         } catch (error) {
