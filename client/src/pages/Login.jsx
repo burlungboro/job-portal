@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 const Login = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -22,6 +23,10 @@ const Login = () => {
             localStorage.setItem("user", JSON.stringify(user));
 
             setMessage("Login successful!");
+
+            if (user.role === "CANDIDATE") {
+                navigate("/candidate");
+            }
         } catch (error) {
             console.error("Login failed:", error);
 
