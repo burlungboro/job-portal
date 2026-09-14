@@ -1,11 +1,7 @@
+import Login from "./pages/Login";
+
 function App() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-600">
-      <h1 className="text-4xl font-bold text-white">
-        Job Portal
-      </h1>
-    </div>
-  )
+    return <Login />;
 }
 
-export default App
+export default App;

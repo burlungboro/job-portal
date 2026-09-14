@@ -1,4 +1,32 @@
+import { useState } from "react";
+import api from "../api/axios";
+
 const Login = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [message, setMessage] = useState("");
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        try {
+            const response = await api.post("/auth/login", {
+                email,
+                password,
+            });
+
+            console.log("Login successful:", response.data);
+
+            setMessage("Login successful!");
+        } catch (error) {
+            console.error("Login failed:", error);
+
+            setMessage(
+                error.response?.data?.message || "Login failed"
+            );
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
             <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
@@ -10,7 +38,7 @@ const Login = () => {
                     Login to your account
                 </p>
 
-                <form className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
                         <label
                             htmlFor="email"
@@ -22,8 +50,11 @@ const Login = () => {
                         <input
                             id="email"
                             type="email"
+                            value={email}
+                            onChange={(event) => setEmail(event.target.value)}
                             placeholder="Enter your email"
                             className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
                         />
                     </div>
 
@@ -38,8 +69,11 @@ const Login = () => {
                         <input
                             id="password"
                             type="password"
+                            value={password}
+                            onChange={(event) => setPassword(event.target.value)}
                             placeholder="Enter your password"
                             className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
                         />
                     </div>
 
@@ -50,6 +84,12 @@ const Login = () => {
                         Login
                     </button>
                 </form>
+
+                {message && (
+                    <p className="text-center text-sm mt-4 text-gray-700">
+                        {message}
+                    </p>
+                )}
 
                 <p className="text-center text-sm text-gray-500 mt-6">
                     Don't have an account? Register here

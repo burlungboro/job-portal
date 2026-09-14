@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const db = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const candidateRoutes = require("./routes/candidateRoutes");
@@ -9,6 +10,7 @@ const applicationRoutes = require("./routes/applicationRoutes");
 const app = express();
 const PORT = 5000;
 
+app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/candidates", candidateRoutes);
