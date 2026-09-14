@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../api/axios";
 
 const Login = () => {
@@ -92,7 +93,7 @@ const Login = () => {
                 )}
 
                 <p className="text-center text-sm text-gray-500 mt-6">
-                    Don't have an account? Register here
+                    Don't have an account? <Link to="/register">Register here</Link>
                 </p>
             </div>
         </div>
