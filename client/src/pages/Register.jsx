@@ -1,20 +1,31 @@
 import { useState } from "react";
+import api from "../api/axios";
 
 const Register = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("CANDIDATE");
+    const [message, setMessage] = useState("");
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        console.log({
-            name,
-            email,
-            password,
-            role,
-        });
+        try {
+            await api.post("/auth/register", {
+                name,
+                email,
+                password,
+                role,
+            });
+            setMessage("Registration successful!");
+        } catch (error) {
+            setMessage(
+                error.response?.data?.message ||
+                    error.response?.data?.error ||
+                    error.message
+            );
+        }
     };
 
     return (
@@ -112,6 +123,12 @@ const Register = () => {
                         Register
                     </button>
                 </form>
+
+                {message && (
+                    <p className="text-center text-sm text-gray-500 mt-6">
+                        {message}
+                    </p>
+                )}
 
                 <p className="text-center text-sm text-gray-500 mt-6">
                     Already have an account? Login here
