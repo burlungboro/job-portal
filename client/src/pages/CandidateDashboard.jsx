@@ -1,4 +1,17 @@
 const CandidateDashboard = () => {
+    let userName = "";
+
+    try {
+        const storedUser = localStorage.getItem("user");
+        const user = storedUser ? JSON.parse(storedUser) : null;
+
+        if (typeof user?.name === "string" && user.name.trim()) {
+            userName = user.name.trim();
+        }
+    } catch {
+        userName = "";
+    }
+
     return (
         <main className="min-h-screen bg-gray-100 px-4 py-10 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-6xl">
@@ -7,7 +20,9 @@ const CandidateDashboard = () => {
                         Candidate Dashboard
                     </h1>
                     <p className="text-gray-600">
-                        Welcome to your Job Portal dashboard
+                        {userName
+                            ? `Welcome, ${userName}!`
+                            : "Welcome to your Job Portal dashboard"}
                     </p>
                 </section>
 
