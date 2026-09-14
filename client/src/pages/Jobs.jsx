@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../api/axios";
 
 function Jobs() {
@@ -41,37 +42,36 @@ function Jobs() {
                 ) : (
                     <div className="grid gap-6 md:grid-cols-2">
                         {jobs.map((job) => (
-                            <article
-                                key={job.id}
-                                className="rounded-lg bg-white p-6 shadow"
-                            >
-                                <h2 className="mb-2 text-2xl font-semibold text-gray-900">
-                                    {job.title}
-                                </h2>
-                                <div className="space-y-2 text-gray-700">
-                                    <p>
-                                        <strong>Location:</strong> {job.location}
-                                    </p>
-                                    <p>
-                                        <strong>Employment type:</strong>{" "}
-                                        {job.employment_type}
-                                    </p>
-                                    <p>
-                                        <strong>Experience required:</strong>{" "}
-                                        {job.experience_required}
-                                    </p>
-                                    <p>
-                                        <strong>Description:</strong> {job.description}
-                                    </p>
-                                    <p>
-                                        <strong>Company ID:</strong> {job.company_id}
-                                    </p>
-                                    <p>
-                                        <strong>Application deadline:</strong>{" "}
-                                        {job.application_deadline}
-                                    </p>
-                                </div>
-                            </article>
+                            <Link key={job.id} to={`/jobs/${job.id}`}>
+                                <article className="rounded-lg bg-white p-6 shadow">
+                                    <h2 className="mb-2 text-2xl font-semibold text-gray-900">
+                                        {job.title}
+                                    </h2>
+                                    <div className="space-y-2 text-gray-700">
+                                        <p>
+                                            <strong>Location:</strong> {job.location}
+                                        </p>
+                                        <p>
+                                            <strong>Employment type:</strong>{" "}
+                                            {job.employment_type}
+                                        </p>
+                                        <p>
+                                            <strong>Experience required:</strong>{" "}
+                                            {job.experience_required}
+                                        </p>
+                                        <p>
+                                            <strong>Description:</strong> {job.description}
+                                        </p>
+                                        <p>
+                                            <strong>Company ID:</strong> {job.company_id}
+                                        </p>
+                                        <p>
+                                            <strong>Application deadline:</strong>{" "}
+                                            {job.application_deadline}
+                                        </p>
+                                    </div>
+                                </article>
+                            </Link>
                         ))}
                     </div>
                 )}
