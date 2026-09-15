@@ -1,0 +1,102 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import api from "../api/axios";
+
+function RecruiterApplications() {
+    const [applications, setApplications] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        const fetchApplications = async () => {
+            try {
+                const response = await api.get("/applications/recruiter");
+                setApplications(response.data.applications);
+            } catch {
+                setError(
+                    "Unable to load recruiter applications. Please try again later."
+                );
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchApplications();
+    }, []);
+
+    if (loading) {
+        return <p className="p-6 text-gray-700">Loading applications...</p>;
+    }
+
+    if (error) {
+        return <p className="p-6 text-red-600">{error}</p>;
+    }
+
+    return (
+        <main className="min-h-screen bg-gray-100 px-4 py-10 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-4xl">
+                <div className="mb-6 flex items-center justify-between gap-4">
+                    <h1 className="text-3xl font-bold text-gray-800">
+                        Recruiter Applications
+                    </h1>
+                    <Link
+                        to="/recruiter"
+                        className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                    >
+                        Back to Dashboard
+                    </Link>
+                </div>
+
+                {applications.length === 0 ? (
+                    <p className="rounded-lg bg-white p-6 text-gray-700 shadow-md">
+                        No applications found.
+                    </p>
+                ) : (
+                    <div className="space-y-6">
+                        {applications.map((application) => (
+                            <article
+                                key={application.application_id}
+                                className="rounded-lg bg-white p-6 shadow-md"
+                            >
+                                <h2 className="mb-4 text-2xl font-semibold text-gray-800">
+                                    {application.candidate_name}
+                                </h2>
+                                <div className="space-y-2 text-gray-700">
+                                    <p>
+                                        <strong>Candidate email:</strong>{" "}
+                                        {application.candidate_email}
+                                    </p>
+                                    <p>
+                                        <strong>Job title:</strong>{" "}
+                                        {application.job_title}
+                                    </p>
+                                    <p>
+                                        <strong>Company:</strong>{" "}
+                                        {application.company_name}
+                                    </p>
+                                    <p>
+                                        <strong>Application status:</strong>{" "}
+                                        {application.status}
+                                    </p>
+                                    <p>
+                                        <strong>Cover letter:</strong>{" "}
+                                        {application.cover_letter ||
+                                            "No cover letter provided."}
+                                    </p>
+                                    <p>
+                                        <strong>Applied date:</strong>{" "}
+                                        {new Date(
+                                            application.applied_at
+                                        ).toLocaleDateString()}
+                                    </p>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </main>
+    );
+}
+
+export default RecruiterApplications;
