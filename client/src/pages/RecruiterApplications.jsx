@@ -6,6 +6,31 @@ function RecruiterApplications() {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [statusMessage, setStatusMessage] = useState("");
+
+    const updateApplicationStatus = async (applicationId, newStatus) => {
+        setStatusMessage("");
+
+        try {
+            await api.put(`/applications/${applicationId}/status`, {
+                status: newStatus,
+            });
+
+            setApplications((currentApplications) =>
+                currentApplications.map((application) =>
+                    application.application_id === applicationId
+                        ? { ...application, status: newStatus }
+                        : application
+                )
+            );
+            setStatusMessage("Status updated successfully.");
+        } catch (requestError) {
+            setStatusMessage(
+                requestError.response?.data?.message ||
+                    "Unable to update application status. Please try again."
+            );
+        }
+    };
 
     useEffect(() => {
         const fetchApplications = async () => {
@@ -47,6 +72,12 @@ function RecruiterApplications() {
                     </Link>
                 </div>
 
+                {statusMessage && (
+                    <p className="mb-6 rounded-lg bg-white p-4 text-gray-700 shadow-md">
+                        {statusMessage}
+                    </p>
+                )}
+
                 {applications.length === 0 ? (
                     <p className="rounded-lg bg-white p-6 text-gray-700 shadow-md">
                         No applications found.
@@ -76,7 +107,29 @@ function RecruiterApplications() {
                                     </p>
                                     <p>
                                         <strong>Application status:</strong>{" "}
-                                        {application.status}
+                                        <select
+                                            value={application.status}
+                                            onChange={(event) =>
+                                                updateApplicationStatus(
+                                                    application.application_id,
+                                                    event.target.value
+                                                )
+                                            }
+                                            className="rounded border border-gray-300 bg-white px-2 py-1"
+                                        >
+                                            <option value="SUBMITTED">
+                                                SUBMITTED
+                                            </option>
+                                            <option value="REVIEWING">
+                                                REVIEWING
+                                            </option>
+                                            <option value="REJECTED">
+                                                REJECTED
+                                            </option>
+                                            <option value="ACCEPTED">
+                                                ACCEPTED
+                                            </option>
+                                        </select>
                                     </p>
                                     <p>
                                         <strong>Cover letter:</strong>{" "}
