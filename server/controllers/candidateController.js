@@ -28,6 +28,12 @@ const upsertCandidateProfile = async (req, res) => {
 		const userId = req.user.id;
 		const { phone, location, headline, bio, profile_picture, resume_url } =
 			req.body;
+		const normalizedPhone = phone ?? null;
+		const normalizedLocation = location ?? null;
+		const normalizedHeadline = headline ?? null;
+		const normalizedBio = bio ?? null;
+		const normalizedProfilePicture = profile_picture ?? null;
+		const normalizedResumeUrl = resume_url ?? null;
 
 		const [existingProfiles] = await db.execute(
 			"SELECT * FROM candidate_profiles WHERE user_id = ?",
@@ -35,12 +41,12 @@ const upsertCandidateProfile = async (req, res) => {
 		);
 
 		const profileValues = [
-			phone,
-			location,
-			headline,
-			bio,
-			profile_picture,
-			resume_url,
+			normalizedPhone,
+			normalizedLocation,
+			normalizedHeadline,
+			normalizedBio,
+			normalizedProfilePicture,
+			normalizedResumeUrl,
 		];
 
 		if (existingProfiles.length > 0) {
@@ -54,12 +60,12 @@ const upsertCandidateProfile = async (req, res) => {
 
 			return res.status(200).json({
 				...existingProfiles[0],
-				phone,
-				location,
-				headline,
-				bio,
-				profile_picture,
-				resume_url,
+				phone: normalizedPhone,
+				location: normalizedLocation,
+				headline: normalizedHeadline,
+				bio: normalizedBio,
+				profile_picture: normalizedProfilePicture,
+				resume_url: normalizedResumeUrl,
 			});
 		}
 
@@ -73,12 +79,12 @@ const upsertCandidateProfile = async (req, res) => {
 		return res.status(201).json({
 			id: result.insertId,
 			user_id: userId,
-			phone,
-			location,
-			headline,
-			bio,
-			profile_picture,
-			resume_url,
+			phone: normalizedPhone,
+			location: normalizedLocation,
+			headline: normalizedHeadline,
+			bio: normalizedBio,
+			profile_picture: normalizedProfilePicture,
+			resume_url: normalizedResumeUrl,
 		});
 	} catch (error) {
 		console.error("Upsert candidate profile error:", error);

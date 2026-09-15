@@ -10,6 +10,7 @@ import CreateJob from "./pages/CreateJob";
 import EditJob from "./pages/EditJob";
 import ManageJobs from "./pages/ManageJobs";
 import MyApplications from "./pages/MyApplications";
+import CandidateProfile from "./pages/CandidateProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -39,6 +40,14 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <CandidateDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/candidate/profile"
+                    element={
+                        <ProtectedRoute>
+                            <CandidateProfile />
                         </ProtectedRoute>
                     }
                 />

@@ -70,14 +70,16 @@ const CandidateDashboard = () => {
                         </article>
                     </Link>
 
-                    <article className="rounded-lg bg-white p-6 shadow-md">
-                        <h2 className="mb-2 text-xl font-semibold text-gray-800">
-                            My Profile
-                        </h2>
-                        <p className="text-gray-600">
-                            Review and update your candidate profile.
-                        </p>
-                    </article>
+                    <Link to="/candidate/profile" className="block">
+                        <article className="rounded-lg bg-white p-6 shadow-md">
+                            <h2 className="mb-2 text-xl font-semibold text-gray-800">
+                                My Profile
+                            </h2>
+                            <p className="text-gray-600">
+                                Review and update your candidate profile.
+                            </p>
+                        </article>
+                    </Link>
                 </section>
             </div>
         </main>
