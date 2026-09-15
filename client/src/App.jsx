@@ -7,6 +7,7 @@ import CandidateDashboard from "./pages/CandidateDashboard";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import RecruiterApplications from "./pages/RecruiterApplications";
 import CreateJob from "./pages/CreateJob";
+import EditJob from "./pages/EditJob";
 import ManageJobs from "./pages/ManageJobs";
 import MyApplications from "./pages/MyApplications";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -78,6 +79,14 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <CreateJob />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/recruiter/jobs/:id/edit"
+                    element={
+                        <ProtectedRoute>
+                            <EditJob />
                         </ProtectedRoute>
                     }
                 />

@@ -22,6 +22,19 @@ function ManageJobs() {
         fetchJobs();
     }, []);
 
+    const handleDeleteJob = async (jobId) => {
+        if (!window.confirm("Are you sure you want to delete this job?")) {
+            return;
+        }
+
+        try {
+            await api.delete(`/jobs/${jobId}`);
+            setJobs((currentJobs) => currentJobs.filter((job) => job.id !== jobId));
+        } catch {
+            setError("Unable to delete job. Please try again later.");
+        }
+    };
+
     if (loading) {
         return <p className="p-6 text-gray-700">Loading jobs...</p>;
     }
@@ -98,6 +111,7 @@ function ManageJobs() {
                                     </Link>
                                     <button
                                         type="button"
+                                        onClick={() => handleDeleteJob(job.id)}
                                         className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
                                     >
                                         Delete
