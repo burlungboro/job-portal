@@ -109,6 +109,25 @@ const getJobs = async (req, res) => {
 	}
 };
 
+const getRecruiterJobs = async (req, res) => {
+	const recruiterId = req.user.id;
+
+	try {
+		const [jobs] = await db.execute(
+			"SELECT * FROM jobs WHERE recruiter_id = ? ORDER BY created_at DESC",
+			[recruiterId]
+		);
+
+		return res.status(200).json(jobs);
+	} catch (error) {
+		console.error("Get recruiter jobs error:", error);
+
+		return res.status(500).json({
+			message: "Server error while retrieving recruiter jobs",
+		});
+	}
+};
+
 const getJobById = async (req, res) => {
 	try {
 		const [jobs] = await db.execute("SELECT * FROM jobs WHERE id = ?", [
@@ -273,6 +292,7 @@ const deleteJob = async (req, res) => {
 module.exports = {
 	createJob,
 	getJobs,
+	getRecruiterJobs,
 	getJobById,
 	updateJob,
 	deleteJob,

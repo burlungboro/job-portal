@@ -46,23 +46,27 @@ const RecruiterDashboard = () => {
                 </section>
 
                 <section className="grid gap-6 md:grid-cols-3">
-                    <article className="rounded-lg bg-white p-6 shadow-md">
-                        <h2 className="mb-2 text-xl font-semibold text-gray-800">
-                            Post a Job
-                        </h2>
-                        <p className="text-gray-600">
-                            Create and publish a new job opportunity.
-                        </p>
-                    </article>
+                    <Link to="/recruiter/jobs/create" className="block">
+                        <article className="rounded-lg bg-white p-6 shadow-md">
+                            <h2 className="mb-2 text-xl font-semibold text-gray-800">
+                                Post a Job
+                            </h2>
+                            <p className="text-gray-600">
+                                Create and publish a new job opportunity.
+                            </p>
+                        </article>
+                    </Link>
 
-                    <article className="rounded-lg bg-white p-6 shadow-md">
-                        <h2 className="mb-2 text-xl font-semibold text-gray-800">
-                            Manage Jobs
-                        </h2>
-                        <p className="text-gray-600">
-                            View and manage jobs posted by you.
-                        </p>
-                    </article>
+                    <Link to="/recruiter/jobs" className="block">
+                        <article className="rounded-lg bg-white p-6 shadow-md">
+                            <h2 className="mb-2 text-xl font-semibold text-gray-800">
+                                Manage Jobs
+                            </h2>
+                            <p className="text-gray-600">
+                                View and manage jobs posted by you.
+                            </p>
+                        </article>
+                    </Link>
 
                     <Link to="/recruiter/applications" className="block">
                         <article className="rounded-lg bg-white p-6 shadow-md">
