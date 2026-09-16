@@ -13,6 +13,9 @@ const CandidateProfile = () => {
     const [profile, setProfile] = useState(emptyProfile);
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [selectedResumeFile, setSelectedResumeFile] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadedResumeUrl, setUploadedResumeUrl] = useState("");
     const [loadError, setLoadError] = useState("");
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
@@ -77,6 +80,38 @@ const CandidateProfile = () => {
         }
     };
 
+    const handleResumeUpload = async () => {
+        if (!selectedResumeFile) {
+            setMessage("Please select a resume file first.");
+            setMessageType("error");
+            return;
+        }
+        console.log("Selected resume:", selectedResumeFile);
+
+        setIsUploading(true);
+        setMessage("");
+        setMessageType("");
+
+        const formData = new FormData();
+        formData.append("resume", selectedResumeFile);
+
+        try {
+            const response = await api.post("/candidates/resume", formData);
+            setUploadedResumeUrl(response.data?.resume_url || "");
+            setMessage(response.data?.message || "Resume uploaded successfully.");
+            setMessageType("success");
+        } catch (error) {
+            setMessage(
+                error.response?.data?.message ||
+                    error.response?.data?.error ||
+                    "Unable to upload your resume. Please try again."
+            );
+            setMessageType("error");
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
     const inputClassName =
         "w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500";
 
@@ -107,6 +142,35 @@ const CandidateProfile = () => {
                     >
                         Back to Dashboard
                     </Link>
+                </div>
+
+                <div className="mb-8 border-b border-gray-200 pb-8">
+                    <h2 className="mb-3 text-lg font-semibold text-gray-800">Resume</h2>
+                    <input
+                        id="resume"
+                        name="resume"
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={(event) => {
+                            console.log("Files:", event.target.files);
+                            console.log("First file:", event.target.files?.[0]);
+                            setSelectedResumeFile(event.target.files?.[0] || null);
+                        }}
+                        className="block w-full text-sm text-gray-700"
+                    />
+                    <button
+                        type="button"
+                        onClick={handleResumeUpload}
+                        disabled={isUploading}
+                        className="mt-3 rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+                    >
+                        {isUploading ? "Uploading..." : "Upload Resume"}
+                    </button>
+                    {uploadedResumeUrl && (
+                        <p className="mt-3 text-sm text-gray-700">
+                            Uploaded resume: {selectedResumeFile?.name || uploadedResumeUrl} ({uploadedResumeUrl})
+                        </p>
+                    )}
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">

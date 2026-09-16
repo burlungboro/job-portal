@@ -95,7 +95,55 @@ const upsertCandidateProfile = async (req, res) => {
 	}
 };
 
+const uploadResume = async (req, res) => {
+	try {
+		if (!req.file) {
+			return res.status(400).json({
+				message: "Resume file is required",
+			});
+		}
+
+		const userId = req.user.id;
+		const resumeUrl = `/uploads/resumes/${req.file.filename}`;
+		const [existingProfiles] = await db.execute(
+			"SELECT * FROM candidate_profiles WHERE user_id = ?",
+			[userId]
+		);
+
+		if (existingProfiles.length > 0) {
+			await db.execute(
+				"UPDATE candidate_profiles SET resume_url = ? WHERE user_id = ?",
+				[resumeUrl, userId]
+			);
+
+			return res.status(200).json({
+				message: "Resume uploaded successfully",
+				resume_url: resumeUrl,
+			});
+		}
+
+		await db.execute(
+			`INSERT INTO candidate_profiles
+			 (user_id, phone, location, headline, bio, profile_picture, resume_url)
+			 VALUES (?, NULL, NULL, NULL, NULL, NULL, ?)`,
+			[userId, resumeUrl]
+		);
+
+		return res.status(201).json({
+			message: "Resume uploaded successfully",
+			resume_url: resumeUrl,
+		});
+	} catch (error) {
+		console.error("Upload resume error:", error);
+
+		return res.status(500).json({
+			message: "Server error while uploading resume",
+		});
+	}
+};
+
 module.exports = {
 	getCandidateProfile,
 	upsertCandidateProfile,
+	uploadResume,
 };

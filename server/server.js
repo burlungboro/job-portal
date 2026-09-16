@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const db = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
@@ -12,6 +13,7 @@ const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/candidates", candidateRoutes);
 app.use("/api/recruiters", recruiterRoutes);
