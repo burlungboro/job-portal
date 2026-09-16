@@ -6,6 +6,7 @@ function ManageJobs() {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         const fetchJobs = async () => {
@@ -22,7 +23,7 @@ function ManageJobs() {
         fetchJobs();
     }, []);
 
-    const handleDeleteJob = async (jobId) => {
+    const handleDelete = async (jobId) => {
         if (!window.confirm("Are you sure you want to delete this job?")) {
             return;
         }
@@ -30,8 +31,12 @@ function ManageJobs() {
         try {
             await api.delete(`/jobs/${jobId}`);
             setJobs((currentJobs) => currentJobs.filter((job) => job.id !== jobId));
-        } catch {
-            setError("Unable to delete job. Please try again later.");
+            setMessage("Job deleted successfully.");
+        } catch (deleteError) {
+            setMessage(
+                deleteError.response?.data?.message ||
+                    "Unable to delete job. Please try again later."
+            );
         }
     };
 
@@ -55,6 +60,8 @@ function ManageJobs() {
                         Back to Dashboard
                     </Link>
                 </div>
+
+                {message && <p className="mb-6 text-gray-700">{message}</p>}
 
                 {jobs.length === 0 ? (
                     <p className="text-gray-700">No jobs found.</p>
@@ -111,7 +118,7 @@ function ManageJobs() {
                                     </Link>
                                     <button
                                         type="button"
-                                        onClick={() => handleDeleteJob(job.id)}
+                                        onClick={() => handleDelete(job.id)}
                                         className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
                                     >
                                         Delete
