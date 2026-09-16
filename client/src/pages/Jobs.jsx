@@ -127,7 +127,7 @@ function Jobs() {
                                             <strong>Description:</strong> {job.description}
                                         </p>
                                         <p>
-                                            <strong>Company ID:</strong> {job.company_id}
+                                            <strong>Company:</strong> {job.company_name}
                                         </p>
                                         <p>
                                             <strong>Application deadline:</strong>{" "}

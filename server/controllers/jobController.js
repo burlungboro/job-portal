@@ -96,7 +96,10 @@ const createJob = async (req, res) => {
 const getJobs = async (req, res) => {
 	try {
 		const [jobs] = await db.execute(
-			"SELECT * FROM jobs ORDER BY created_at DESC"
+			`SELECT j.*, c.name AS company_name
+			FROM jobs j
+			JOIN companies c ON j.company_id = c.id
+			ORDER BY j.created_at DESC`
 		);
 
 		return res.status(200).json(jobs);
