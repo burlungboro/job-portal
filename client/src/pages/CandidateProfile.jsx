@@ -27,6 +27,7 @@ const CandidateProfile = () => {
                 const profileData = response.data?.profile ?? response.data;
 
                 if (profileData) {
+                    setUploadedResumeUrl(profileData.resume_url || "");
                     setProfile({
                         phone: profileData.phone || "",
                         location: profileData.location || "",
@@ -86,7 +87,7 @@ const CandidateProfile = () => {
             setMessageType("error");
             return;
         }
-        console.log("Selected resume:", selectedResumeFile);
+        
 
         setIsUploading(true);
         setMessage("");
@@ -152,8 +153,7 @@ const CandidateProfile = () => {
                         type="file"
                         accept=".pdf,.doc,.docx"
                         onChange={(event) => {
-                            console.log("Files:", event.target.files);
-                            console.log("First file:", event.target.files?.[0]);
+                            
                             setSelectedResumeFile(event.target.files?.[0] || null);
                         }}
                         className="block w-full text-sm text-gray-700"
@@ -168,7 +168,14 @@ const CandidateProfile = () => {
                     </button>
                     {uploadedResumeUrl && (
                         <p className="mt-3 text-sm text-gray-700">
-                            Uploaded resume: {selectedResumeFile?.name || uploadedResumeUrl} ({uploadedResumeUrl})
+                            <a
+                                href={`http://localhost:5000${uploadedResumeUrl}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800"
+                            >
+                                View Resume
+                            </a>
                         </p>
                     )}
                 </div>
