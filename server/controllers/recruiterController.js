@@ -3,8 +3,14 @@ const db = require("../config/db");
 const getRecruiterProfile = async (req, res) => {
 	try {
 		const [profiles] = await db.execute(
-			"SELECT * FROM recruiter_profiles WHERE user_id = ?",
-			[req.user.id]
+    		`SELECT
+        		rp.*,
+        		c.name AS company_name
+     		FROM recruiter_profiles AS rp
+     		LEFT JOIN companies AS c
+        		ON c.id = rp.company_id
+     		WHERE rp.user_id = ?`,
+    		[req.user.id]
 		);
 
 		if (profiles.length === 0) {

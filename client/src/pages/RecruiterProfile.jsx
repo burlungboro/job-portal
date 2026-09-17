@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 
 const emptyProfile = {
+    company_name: "",
     company_id: "",
     phone: "",
     job_title: "",
@@ -23,6 +24,7 @@ const RecruiterProfile = () => {
 
                 if (profileData) {
                     setProfile({
+                        company_name: profileData.company_name || "",
                         company_id: profileData.company_id || "",
                         phone: profileData.phone || "",
                         job_title: profileData.job_title || "",
@@ -59,7 +61,12 @@ const RecruiterProfile = () => {
         setMessageType("");
 
         try {
-            const response = await api.put("/recruiters/profile", profile);
+            const { company_id, phone, job_title } = profile;
+            const response = await api.put("/recruiters/profile", {
+                company_id,
+                phone,
+                job_title,
+            });
             setMessage(response.data?.message || "Profile saved successfully.");
             setMessageType("success");
         } catch (error) {
@@ -99,6 +106,13 @@ const RecruiterProfile = () => {
                 <h1 className="mb-8 text-3xl font-bold text-gray-800">Recruiter Profile</h1>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                        <span className="mb-1 block text-sm font-medium text-gray-700">Company Name</span>
+                        <p className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700">
+                            {profile.company_name || "No company assigned"}
+                        </p>
+                    </div>
+
                     <div>
                         <label htmlFor="company_id" className="mb-1 block text-sm font-medium text-gray-700">
                             Company ID
