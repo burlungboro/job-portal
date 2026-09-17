@@ -142,8 +142,56 @@ const uploadResume = async (req, res) => {
 	}
 };
 
+const uploadProfilePicture = async (req, res) => {
+	try {
+		if (!req.file) {
+			return res.status(400).json({
+				message: "Profile picture file is required",
+			});
+		}
+
+		const userId = req.user.id;
+		const profilePictureUrl = `/uploads/profile-pictures/${req.file.filename}`;
+		const [existingProfiles] = await db.execute(
+			"SELECT * FROM candidate_profiles WHERE user_id = ?",
+			[userId]
+		);
+
+		if (existingProfiles.length > 0) {
+			await db.execute(
+				"UPDATE candidate_profiles SET profile_picture = ? WHERE user_id = ?",
+				[profilePictureUrl, userId]
+			);
+
+			return res.status(200).json({
+				message: "Profile picture uploaded successfully",
+				profile_picture: profilePictureUrl,
+			});
+		}
+
+		await db.execute(
+			`INSERT INTO candidate_profiles
+			 (user_id, phone, location, headline, bio, profile_picture, resume_url)
+			 VALUES (?, NULL, NULL, NULL, NULL, ?, NULL)`,
+			[userId, profilePictureUrl]
+		);
+
+		return res.status(201).json({
+			message: "Profile picture uploaded successfully",
+			profile_picture: profilePictureUrl,
+		});
+	} catch (error) {
+		console.error("Upload profile picture error:", error);
+
+		return res.status(500).json({
+			message: "Server error while uploading profile picture",
+		});
+	}
+};
+
 module.exports = {
 	getCandidateProfile,
 	upsertCandidateProfile,
 	uploadResume,
+	uploadProfilePicture,
 };

@@ -16,6 +16,9 @@ const CandidateProfile = () => {
     const [selectedResumeFile, setSelectedResumeFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadedResumeUrl, setUploadedResumeUrl] = useState("");
+    const [selectedProfilePictureFile, setSelectedProfilePictureFile] = useState(null);
+    const [isUploadingProfilePicture, setIsUploadingProfilePicture] = useState(false);
+    const [profilePictureUrl, setProfilePictureUrl] = useState("");
     const [loadError, setLoadError] = useState("");
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
@@ -28,6 +31,7 @@ const CandidateProfile = () => {
 
                 if (profileData) {
                     setUploadedResumeUrl(profileData.resume_url || "");
+                    setProfilePictureUrl(profileData.profile_picture || "");
                     setProfile({
                         phone: profileData.phone || "",
                         location: profileData.location || "",
@@ -113,6 +117,37 @@ const CandidateProfile = () => {
         }
     };
 
+    const handleProfilePictureUpload = async () => {
+        if (!selectedProfilePictureFile) {
+            setMessage("Please select a profile picture first.");
+            setMessageType("error");
+            return;
+        }
+
+        setIsUploadingProfilePicture(true);
+        setMessage("");
+        setMessageType("");
+
+        const formData = new FormData();
+        formData.append("profile_picture", selectedProfilePictureFile);
+
+        try {
+            const response = await api.post("/candidates/profile-picture", formData);
+            setProfilePictureUrl(response.data?.profile_picture || "");
+            setMessage(response.data?.message || "Profile picture uploaded successfully.");
+            setMessageType("success");
+        } catch (error) {
+            setMessage(
+                error.response?.data?.message ||
+                    error.response?.data?.error ||
+                    "Unable to upload your profile picture. Please try again."
+            );
+            setMessageType("error");
+        } finally {
+            setIsUploadingProfilePicture(false);
+        }
+    };
+
     const inputClassName =
         "w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500";
 
@@ -178,6 +213,37 @@ const CandidateProfile = () => {
                             </a>
                         </p>
                     )}
+                </div>
+
+                <div className="mb-8 border-b border-gray-200 pb-8">
+                    <h2 className="mb-3 text-lg font-semibold text-gray-800">Profile Picture</h2>
+                    {profilePictureUrl ? (
+                        <img
+                            src={`http://localhost:5000${profilePictureUrl}`}
+                            alt="Profile"
+                            className="mb-4 h-24 w-24 rounded-full object-cover"
+                        />
+                    ) : (
+                        <p className="mb-4 text-sm text-gray-600">No profile picture</p>
+                    )}
+                    <input
+                        id="profile-picture"
+                        name="profile_picture"
+                        type="file"
+                        accept=".jpg,.jpeg,.png,.webp"
+                        onChange={(event) => {
+                            setSelectedProfilePictureFile(event.target.files?.[0] || null);
+                        }}
+                        className="block w-full text-sm text-gray-700"
+                    />
+                    <button
+                        type="button"
+                        onClick={handleProfilePictureUpload}
+                        disabled={isUploadingProfilePicture}
+                        className="mt-3 rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+                    >
+                        {isUploadingProfilePicture ? "Uploading..." : "Upload Profile Picture"}
+                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
