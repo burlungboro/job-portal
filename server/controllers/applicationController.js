@@ -116,13 +116,14 @@ const getApplicationsForRecruiter = async (req, res) => {
 				c.name AS company_name,
 				ja.status,
 				ja.cover_letter,
-				ja.resume_url,
+				cp.resume_url AS resume_url,
 				ja.applied_at,
 				ja.updated_at
 			 FROM job_applications ja
 			 JOIN jobs j ON ja.job_id = j.id
 			 JOIN companies c ON j.company_id = c.id
 			 JOIN users u ON ja.candidate_id = u.id
+			 LEFT JOIN candidate_profiles cp ON cp.user_id = ja.candidate_id
 			 WHERE j.recruiter_id = ?
 			 ORDER BY ja.applied_at DESC`,
 			[recruiter_id]
