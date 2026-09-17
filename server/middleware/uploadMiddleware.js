@@ -35,4 +35,44 @@ const uploadResume = multer({
   },
 });
 
-module.exports = { uploadResume };
+const profilePictureUploadDirectory = path.join(
+  __dirname,
+  "..",
+  "uploads",
+  "profile-pictures"
+);
+
+fs.mkdirSync(profilePictureUploadDirectory, { recursive: true });
+
+const profilePictureStorage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, profilePictureUploadDirectory);
+  },
+  filename: (req, file, callback) => {
+    const fileExtension = path.extname(file.originalname);
+    callback(null, `${Date.now()}${fileExtension}`);
+  },
+});
+
+const profilePictureFileFilter = (req, file, callback) => {
+  const fileExtension = path.extname(file.originalname).toLowerCase();
+  const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp"];
+
+  if (allowedExtensions.includes(fileExtension)) {
+    return callback(null, true);
+  }
+
+  return callback(
+    new Error("Only JPG, JPEG, PNG, and WEBP profile pictures are allowed")
+  );
+};
+
+const uploadProfilePicture = multer({
+  storage: profilePictureStorage,
+  fileFilter: profilePictureFileFilter,
+  limits: {
+    fileSize: 2 * 1024 * 1024,
+  },
+});
+
+module.exports = { uploadResume, uploadProfilePicture };
