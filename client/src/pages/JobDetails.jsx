@@ -78,10 +78,14 @@ function JobDetails() {
                         <strong>Experience required:</strong> {job.experience_required}
                     </p>
                     <p>
-                        <strong>Salary minimum:</strong> {job.salary_min}
-                    </p>
-                    <p>
-                        <strong>Salary maximum:</strong> {job.salary_max}
+                        <strong>Salary:</strong>{" "}
+                        {job.salary_min != null && job.salary_max != null
+                            ? `₹${Number(job.salary_min).toLocaleString("en-IN")} – ₹${Number(job.salary_max).toLocaleString("en-IN")}`
+                            : job.salary_min != null
+                              ? `₹${Number(job.salary_min).toLocaleString("en-IN")}+`
+                              : job.salary_max != null
+                                ? `Up to ₹${Number(job.salary_max).toLocaleString("en-IN")}`
+                                : "Not specified"}
                     </p>
                     <p>
                         <strong>Required skills:</strong> {job.skills_required}
