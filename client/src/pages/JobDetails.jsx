@@ -90,7 +90,7 @@ function JobDetails() {
                         <strong>Application deadline:</strong> {job.application_deadline}
                     </p>
                     <p>
-                        <strong>Company ID:</strong> {job.company_id}
+                        <strong>Company:</strong> {job.company_name}
                     </p>
                     <p>
                         <strong>Job status:</strong> {job.status}
