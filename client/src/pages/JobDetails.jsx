@@ -10,6 +10,7 @@ function JobDetails() {
     const [notFound, setNotFound] = useState(false);
     const [coverLetter, setCoverLetter] = useState("");
     const [applicationMessage, setApplicationMessage] = useState("");
+    const [hasApplied, setHasApplied] = useState(false);
 
     const handleApply = async () => {
         try {
@@ -17,6 +18,7 @@ function JobDetails() {
                 job_id: id,
                 cover_letter: coverLetter,
             });
+            setHasApplied(true);
             setApplicationMessage("Application submitted successfully!");
         } catch (requestError) {
             setApplicationMessage(
@@ -118,9 +120,10 @@ function JobDetails() {
                 <button
                     type="button"
                     onClick={handleApply}
+                    disabled={hasApplied}
                     className="rounded bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700"
                 >
-                    Apply for this Job
+                    {hasApplied ? "Already Applied" : "Apply for this Job"}
                 </button>
 
                 {applicationMessage && (
