@@ -78,6 +78,17 @@ const RecruiterDashboard = () => {
                             </p>
                         </article>
                     </Link>
+
+                    <Link to="/recruiter/profile" className="block">
+                        <article className="rounded-lg bg-white p-6 shadow-md">
+                            <h2 className="mb-2 text-xl font-semibold text-gray-800">
+                                My Profile
+                            </h2>
+                            <p className="text-gray-600">
+                                View and update your recruiter profile.
+                            </p>
+                        </article>
+                    </Link>
                 </section>
             </div>
         </main>
