@@ -11,6 +11,7 @@ import EditJob from "./pages/EditJob";
 import ManageJobs from "./pages/ManageJobs";
 import MyApplications from "./pages/MyApplications";
 import CandidateProfile from "./pages/CandidateProfile";
+import RecruiterProfile from "./pages/RecruiterProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -56,6 +57,14 @@ function App() {
                     element={
                         <ProtectedRoute allowedRoles={["RECRUITER"]}>
                             <RecruiterDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/recruiter/profile"
+                    element={
+                        <ProtectedRoute allowedRoles={["RECRUITER"]}>
+                            <RecruiterProfile />
                         </ProtectedRoute>
                     }
                 />

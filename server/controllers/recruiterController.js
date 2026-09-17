@@ -3,12 +3,7 @@ const db = require("../config/db");
 const getRecruiterProfile = async (req, res) => {
 	try {
 		const [profiles] = await db.execute(
-			`SELECT rp.*, c.id AS company_id, c.name AS company_name,
-					c.description AS company_description, c.website AS company_website,
-					c.location AS company_location, c.logo_url AS company_logo_url
-			 FROM recruiter_profiles rp
-			 LEFT JOIN companies c ON c.id = rp.company_id
-			 WHERE rp.user_id = ?`,
+			"SELECT * FROM recruiter_profiles WHERE user_id = ?",
 			[req.user.id]
 		);
 
@@ -32,6 +27,9 @@ const upsertRecruiterProfile = async (req, res) => {
 	try {
 		const userId = req.user.id;
 		const { company_id, phone, job_title } = req.body;
+		const normalizedCompanyId = company_id ?? null;
+		const normalizedPhone = phone ?? null;
+		const normalizedJobTitle = job_title ?? null;
 
 		const [existingProfiles] = await db.execute(
 			"SELECT * FROM recruiter_profiles WHERE user_id = ?",
@@ -43,14 +41,14 @@ const upsertRecruiterProfile = async (req, res) => {
 				`UPDATE recruiter_profiles
 				 SET company_id = ?, phone = ?, job_title = ?
 				 WHERE user_id = ?`,
-				[company_id, phone, job_title, userId]
+				[normalizedCompanyId, normalizedPhone, normalizedJobTitle, userId]
 			);
 
 			return res.status(200).json({
 				...existingProfiles[0],
-				company_id,
-				phone,
-				job_title,
+				company_id: normalizedCompanyId,
+				phone: normalizedPhone,
+				job_title: normalizedJobTitle,
 			});
 		}
 
@@ -58,15 +56,15 @@ const upsertRecruiterProfile = async (req, res) => {
 			`INSERT INTO recruiter_profiles
 			 (user_id, company_id, phone, job_title)
 			 VALUES (?, ?, ?, ?)`,
-			[userId, company_id, phone, job_title]
+			[userId, normalizedCompanyId, normalizedPhone, normalizedJobTitle]
 		);
 
 		return res.status(201).json({
 			id: result.insertId,
 			user_id: userId,
-			company_id,
-			phone,
-			job_title,
+			company_id: normalizedCompanyId,
+			phone: normalizedPhone,
+			job_title: normalizedJobTitle,
 		});
 	} catch (error) {
 		console.error("Upsert recruiter profile error:", error);
