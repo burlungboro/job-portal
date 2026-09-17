@@ -2,6 +2,17 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
 
+function getStatusClasses(status) {
+    const statusClasses = {
+        SUBMITTED: "bg-blue-100 text-blue-800",
+        REVIEWING: "bg-amber-100 text-amber-800",
+        ACCEPTED: "bg-green-100 text-green-800",
+        REJECTED: "bg-red-100 text-red-800",
+    };
+
+    return statusClasses[status] || "bg-gray-100 text-gray-800";
+}
+
 function MyApplications() {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -76,7 +87,13 @@ function MyApplications() {
                                     </p>
                                     <p>
                                         <strong>Application status:</strong>{" "}
-                                        {application.status}
+                                        <span
+                                            className={`inline-block rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusClasses(
+                                                application.status
+                                            )}`}
+                                        >
+                                            {application.status}
+                                        </span>
                                     </p>
                                     <p>
                                         <strong>Cover letter:</strong>{" "}
