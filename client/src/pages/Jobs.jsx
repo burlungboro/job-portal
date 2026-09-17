@@ -120,6 +120,30 @@ function Jobs() {
                                             {job.employment_type}
                                         </p>
                                         <p>
+                                            <strong>Salary:</strong>{" "}
+                                            {job.salary_min !== null &&
+                                            job.salary_min !== undefined &&
+                                            job.salary_min !== "" &&
+                                            job.salary_max !== null &&
+                                            job.salary_max !== undefined &&
+                                            job.salary_max !== "" ? (
+                                                <>
+                                                    ₹{Number(job.salary_min).toLocaleString("en-IN")} – ₹
+                                                    {Number(job.salary_max).toLocaleString("en-IN")}
+                                                </>
+                                            ) : job.salary_min !== null &&
+                                              job.salary_min !== undefined &&
+                                              job.salary_min !== "" ? (
+                                                <>₹{Number(job.salary_min).toLocaleString("en-IN")}+</>
+                                            ) : job.salary_max !== null &&
+                                              job.salary_max !== undefined &&
+                                              job.salary_max !== "" ? (
+                                                <>Up to ₹{Number(job.salary_max).toLocaleString("en-IN")}</>
+                                            ) : (
+                                                "Not specified"
+                                            )}
+                                        </p>
+                                        <p>
                                             <strong>Experience required:</strong>{" "}
                                             {job.experience_required}
                                         </p>
