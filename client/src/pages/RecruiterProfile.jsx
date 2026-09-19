@@ -10,6 +10,9 @@ const emptyProfile = {
 
 const RecruiterProfile = () => {
     const [profile, setProfile] = useState(emptyProfile);
+    const [companies, setCompanies] = useState([]);
+    const [companiesLoading, setCompaniesLoading] = useState(true);
+    const [companiesError, setCompaniesError] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [loadError, setLoadError] = useState("");
@@ -44,6 +47,25 @@ const RecruiterProfile = () => {
         };
 
         fetchProfile();
+    }, []);
+
+    useEffect(() => {
+        const fetchCompanies = async () => {
+            try {
+                const response = await api.get("/companies");
+                setCompanies(Array.isArray(response.data) ? response.data : []);
+            } catch (error) {
+                setCompaniesError(
+                    error.response?.data?.message ||
+                        error.response?.data?.error ||
+                        "Unable to load companies. Please try again later."
+                );
+            } finally {
+                setCompaniesLoading(false);
+            }
+        };
+
+        fetchCompanies();
     }, []);
 
     const handleChange = (event) => {
@@ -115,16 +137,24 @@ const RecruiterProfile = () => {
 
                     <div>
                         <label htmlFor="company_id" className="mb-1 block text-sm font-medium text-gray-700">
-                            Company ID
+                            Company
                         </label>
-                        <input
+                        <select
                             id="company_id"
                             name="company_id"
-                            type="text"
                             value={profile.company_id}
                             onChange={handleChange}
                             className={inputClassName}
-                        />
+                        >
+                            <option value="">Select a company</option>
+                            {companiesLoading && <option disabled>Loading companies...</option>}
+                            {companies.map((company) => (
+                                <option key={company.id} value={company.id}>
+                                    {company.name}
+                                </option>
+                            ))}
+                        </select>
+                        {companiesError && <p className="mt-1 text-sm text-red-600">{companiesError}</p>}
                     </div>
 
                     <div>
