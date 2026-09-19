@@ -44,6 +44,12 @@ const CreateJob = () => {
         setIsSubmitting(true);
         setMessage("");
 
+        if (salaryMin !== "" && salaryMax !== "" && Number(salaryMin) > Number(salaryMax)) {
+            setMessage("Minimum salary cannot be greater than maximum salary.");
+            setIsSubmitting(false);
+            return;
+        }
+
         try {
             const response = await api.post("/jobs", {
                 company_id: Number(companyId),
