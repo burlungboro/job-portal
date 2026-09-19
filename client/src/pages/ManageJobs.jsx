@@ -4,6 +4,7 @@ import api from "../api/axios";
 
 function ManageJobs() {
     const [jobs, setJobs] = useState([]);
+    const [companies, setCompanies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
@@ -21,6 +22,19 @@ function ManageJobs() {
         };
 
         fetchJobs();
+    }, []);
+
+    useEffect(() => {
+        const fetchCompanies = async () => {
+            try {
+                const response = await api.get("/companies");
+                setCompanies(Array.isArray(response.data) ? response.data : []);
+            } catch {
+                setCompanies([]);
+            }
+        };
+
+        fetchCompanies();
     }, []);
 
     const handleDelete = async (jobId) => {
@@ -81,6 +95,11 @@ function ManageJobs() {
                                 <div className="space-y-2 text-gray-700">
                                     <p>
                                         <strong>Location:</strong> {job.location || "Not specified"}
+                                    </p>
+                                    <p>
+                                        <strong>Company:</strong>{" "}
+                                        {companies.find((company) => company.id === job.company_id)?.name ||
+                                            "Unknown company"}
                                     </p>
                                     <p>
                                         <strong>Employment type:</strong>{" "}

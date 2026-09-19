@@ -15,6 +15,9 @@ const EditJob = () => {
     const [skillsRequired, setSkillsRequired] = useState("");
     const [applicationDeadline, setApplicationDeadline] = useState("");
     const [companyId, setCompanyId] = useState("");
+    const [companies, setCompanies] = useState([]);
+    const [companiesLoading, setCompaniesLoading] = useState(true);
+    const [companiesError, setCompaniesError] = useState("");
     const [status, setStatus] = useState("DRAFT");
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,6 +55,25 @@ const EditJob = () => {
         fetchJob();
     }, [id]);
 
+    useEffect(() => {
+        const fetchCompanies = async () => {
+            try {
+                const response = await api.get("/companies");
+                setCompanies(Array.isArray(response.data) ? response.data : []);
+            } catch (error) {
+                setCompaniesError(
+                    error.response?.data?.message ||
+                        error.response?.data?.error ||
+                        "Unable to load companies. Please try again later."
+                );
+            } finally {
+                setCompaniesLoading(false);
+            }
+        };
+
+        fetchCompanies();
+    }, []);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsSubmitting(true);
@@ -59,7 +81,7 @@ const EditJob = () => {
 
         try {
             const response = await api.put(`/jobs/${id}`, {
-                company_id: companyId,
+                company_id: Number(companyId),
                 title,
                 description,
                 location,
@@ -183,9 +205,18 @@ const EditJob = () => {
                     <div className="grid gap-5 sm:grid-cols-2">
                         <div>
                             <label htmlFor="companyId" className="mb-1 block text-sm font-medium text-gray-700">
-                                Company ID
+                                Company
                             </label>
-                            <input id="companyId" type="number" value={companyId} onChange={(event) => setCompanyId(event.target.value)} className={inputClassName} min="1" required />
+                            <select id="companyId" value={companyId} onChange={(event) => setCompanyId(event.target.value)} className={`${inputClassName} bg-white`} required>
+                                <option value="">Select a company</option>
+                                {companiesLoading && <option disabled>Loading companies...</option>}
+                                {companies.map((company) => (
+                                    <option key={company.id} value={company.id}>
+                                        {company.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {companiesError && <p className="mt-1 text-sm text-red-600">{companiesError}</p>}
                         </div>
 
                         <div>

@@ -8,6 +8,13 @@ const emptyProfile = {
     job_title: "",
 };
 
+const emptyCompany = {
+    name: "",
+    description: "",
+    website: "",
+    location: "",
+};
+
 const RecruiterProfile = () => {
     const [profile, setProfile] = useState(emptyProfile);
     const [companies, setCompanies] = useState([]);
@@ -18,6 +25,11 @@ const RecruiterProfile = () => {
     const [loadError, setLoadError] = useState("");
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
+    const [showCreateCompany, setShowCreateCompany] = useState(false);
+    const [newCompany, setNewCompany] = useState(emptyCompany);
+    const [isCreatingCompany, setIsCreatingCompany] = useState(false);
+    const [createCompanyMessage, setCreateCompanyMessage] = useState("");
+    const [createCompanyMessageType, setCreateCompanyMessageType] = useState("");
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -74,6 +86,52 @@ const RecruiterProfile = () => {
             ...currentProfile,
             [name]: value,
         }));
+    };
+
+    const handleCompanyChange = (event) => {
+        const { name, value } = event.target;
+        setNewCompany((currentCompany) => ({
+            ...currentCompany,
+            [name]: value,
+        }));
+    };
+
+    const handleCreateCompany = async () => {
+        setCreateCompanyMessage("");
+        setCreateCompanyMessageType("");
+
+        if (!newCompany.name.trim()) {
+            setCreateCompanyMessage("Company Name is required.");
+            setCreateCompanyMessageType("error");
+            return;
+        }
+
+        setIsCreatingCompany(true);
+
+        try {
+            const response = await api.post("/companies", newCompany);
+            const createdCompany = response.data;
+
+            setCompanies((currentCompanies) => [...currentCompanies, createdCompany]);
+            setProfile((currentProfile) => ({
+                ...currentProfile,
+                company_id: createdCompany.id,
+                company_name: createdCompany.name,
+            }));
+            setNewCompany(emptyCompany);
+            setShowCreateCompany(false);
+            setCreateCompanyMessage("Company created successfully.");
+            setCreateCompanyMessageType("success");
+        } catch (error) {
+            setCreateCompanyMessage(
+                error.response?.data?.message ||
+                    error.response?.data?.error ||
+                    "Unable to create the company. Please try again."
+            );
+            setCreateCompanyMessageType("error");
+        } finally {
+            setIsCreatingCompany(false);
+        }
     };
 
     const handleSubmit = async (event) => {
@@ -155,6 +213,97 @@ const RecruiterProfile = () => {
                             ))}
                         </select>
                         {companiesError && <p className="mt-1 text-sm text-red-600">{companiesError}</p>}
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setShowCreateCompany((isVisible) => !isVisible);
+                                setCreateCompanyMessage("");
+                                setCreateCompanyMessageType("");
+                            }}
+                            className="mt-2 text-sm font-medium text-blue-600 hover:text-blue-700"
+                        >
+                            {showCreateCompany ? "Cancel" : "Create New Company"}
+                        </button>
+
+                        {showCreateCompany && (
+                            <div className="mt-4 space-y-3 rounded-md border border-gray-200 p-4">
+                                <div>
+                                    <label htmlFor="new-company-name" className="mb-1 block text-sm font-medium text-gray-700">
+                                        Company Name
+                                    </label>
+                                    <input
+                                        id="new-company-name"
+                                        name="name"
+                                        type="text"
+                                        value={newCompany.name}
+                                        onChange={handleCompanyChange}
+                                        className={inputClassName}
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <label htmlFor="new-company-description" className="mb-1 block text-sm font-medium text-gray-700">
+                                        Description
+                                    </label>
+                                    <textarea
+                                        id="new-company-description"
+                                        name="description"
+                                        value={newCompany.description}
+                                        onChange={handleCompanyChange}
+                                        className={inputClassName}
+                                        rows="3"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label htmlFor="new-company-website" className="mb-1 block text-sm font-medium text-gray-700">
+                                        Website
+                                    </label>
+                                    <input
+                                        id="new-company-website"
+                                        name="website"
+                                        type="url"
+                                        value={newCompany.website}
+                                        onChange={handleCompanyChange}
+                                        className={inputClassName}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label htmlFor="new-company-location" className="mb-1 block text-sm font-medium text-gray-700">
+                                        Location
+                                    </label>
+                                    <input
+                                        id="new-company-location"
+                                        name="location"
+                                        type="text"
+                                        value={newCompany.location}
+                                        onChange={handleCompanyChange}
+                                        className={inputClassName}
+                                    />
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={handleCreateCompany}
+                                    disabled={isCreatingCompany}
+                                    className="rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+                                >
+                                    {isCreatingCompany ? "Creating..." : "Create Company"}
+                                </button>
+
+                            </div>
+                        )}
+                        {createCompanyMessage && (
+                            <p
+                                className={`mt-2 text-sm ${
+                                    createCompanyMessageType === "success" ? "text-green-600" : "text-red-600"
+                                }`}
+                            >
+                                {createCompanyMessage}
+                            </p>
+                        )}
                     </div>
 
                     <div>
