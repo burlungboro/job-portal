@@ -96,23 +96,20 @@ function RecruiterApplications() {
                                     <p>
                                         <strong>Candidate email:</strong>{" "}
                                         {application.candidate_email}
+                                    </p>
+                                    <p>
+                                        <strong>Resume:</strong>{" "}
                                         {application.resume_url ? (
-                                            <>
-                                                {" "}
-                                                <a
-                                                    href={`http://localhost:5000${application.resume_url}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="font-medium text-blue-600 hover:text-blue-800 underline"
-                                                >
-                                                    View Resume
-                                                </a>
-                                            </>
+                                            <a
+                                                href={`http://localhost:5000${application.resume_url}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="font-medium text-blue-600 hover:text-blue-800 underline"
+                                            >
+                                                View Resume
+                                            </a>
                                         ) : (
-                                            <span className="text-gray-600">
-                                                {" "}
-                                                No resume uploaded.
-                                            </span>
+                                            <span className="text-gray-600">No resume uploaded</span>
                                         )}
                                     </p>
                                     <p>

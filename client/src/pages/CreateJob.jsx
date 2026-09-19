@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
@@ -14,8 +14,30 @@ const CreateJob = () => {
     const [skillsRequired, setSkillsRequired] = useState("");
     const [applicationDeadline, setApplicationDeadline] = useState("");
     const [companyId, setCompanyId] = useState("");
+    const [companies, setCompanies] = useState([]);
+    const [companiesLoading, setCompaniesLoading] = useState(true);
+    const [companiesError, setCompaniesError] = useState("");
     const [message, setMessage] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        const fetchCompanies = async () => {
+            try {
+                const response = await api.get("/companies");
+                setCompanies(Array.isArray(response.data) ? response.data : []);
+            } catch (error) {
+                setCompaniesError(
+                    error.response?.data?.message ||
+                        error.response?.data?.error ||
+                        "Unable to load companies. Please try again later."
+                );
+            } finally {
+                setCompaniesLoading(false);
+            }
+        };
+
+        fetchCompanies();
+    }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -24,7 +46,7 @@ const CreateJob = () => {
 
         try {
             const response = await api.post("/jobs", {
-                company_id: companyId,
+                company_id: Number(companyId),
                 title,
                 description,
                 location,
@@ -135,9 +157,18 @@ const CreateJob = () => {
 
                     <div>
                         <label htmlFor="companyId" className="mb-1 block text-sm font-medium text-gray-700">
-                            Company ID
+                            Company
                         </label>
-                        <input id="companyId" type="number" value={companyId} onChange={(event) => setCompanyId(event.target.value)} className={inputClassName} min="1" required />
+                        <select id="companyId" value={companyId} onChange={(event) => setCompanyId(event.target.value)} className={`${inputClassName} bg-white`} required>
+                            <option value="">Select a company</option>
+                            {companiesLoading && <option disabled>Loading companies...</option>}
+                            {companies.map((company) => (
+                                <option key={company.id} value={company.id}>
+                                    {company.name}
+                                </option>
+                            ))}
+                        </select>
+                        {companiesError && <p className="mt-1 text-sm text-red-600">{companiesError}</p>}
                     </div>
 
                     <button type="submit" disabled={isSubmitting} className="w-full rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300">
