@@ -65,9 +65,28 @@ const CandidateProfile = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setIsSubmitting(true);
         setMessage("");
         setMessageType("");
+
+        if (profile.phone && !/^[\d\s()+-]+$/.test(profile.phone)) {
+            setMessage("Phone can only contain digits, spaces, +, -, and parentheses.");
+            setMessageType("error");
+            return;
+        }
+
+        if (profile.headline.length > 200) {
+            setMessage("Headline must be 200 characters or fewer.");
+            setMessageType("error");
+            return;
+        }
+
+        if (profile.bio.length > 2000) {
+            setMessage("Bio must be 2000 characters or fewer.");
+            setMessageType("error");
+            return;
+        }
+
+        setIsSubmitting(true);
 
         try {
             const response = await api.put("/candidates/profile", profile);
