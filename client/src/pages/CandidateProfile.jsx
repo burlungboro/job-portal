@@ -169,6 +169,15 @@ const CandidateProfile = () => {
 
     const inputClassName =
         "w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500";
+    const completedProfileItems = [
+        profile.phone,
+        profile.location,
+        profile.headline,
+        profile.bio,
+        uploadedResumeUrl,
+        profilePictureUrl,
+    ].filter(Boolean).length;
+    const profileCompletion = Math.round((completedProfileItems / 6) * 100);
 
     if (isLoading) {
         return (
@@ -198,6 +207,19 @@ const CandidateProfile = () => {
                         Back to Dashboard
                     </Link>
                 </div>
+
+                <section className="mb-8 border-b border-gray-200 pb-8">
+                    <div className="mb-2 flex items-center justify-between">
+                        <h2 className="text-lg font-semibold text-gray-800">Profile Completion</h2>
+                        <span className="font-semibold text-gray-700">{profileCompletion}%</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                        <div
+                            className="h-full rounded-full bg-blue-600"
+                            style={{ width: `${profileCompletion}%` }}
+                        />
+                    </div>
+                </section>
 
                 <div className="mb-8 border-b border-gray-200 pb-8">
                     <h2 className="mb-3 text-lg font-semibold text-gray-800">Resume</h2>

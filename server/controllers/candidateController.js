@@ -28,17 +28,24 @@ const upsertCandidateProfile = async (req, res) => {
 		const userId = req.user.id;
 		const { phone, location, headline, bio, profile_picture, resume_url } =
 			req.body;
-		const normalizedPhone = phone ?? null;
-		const normalizedLocation = location ?? null;
-		const normalizedHeadline = headline ?? null;
-		const normalizedBio = bio ?? null;
-		const normalizedProfilePicture = profile_picture ?? null;
-		const normalizedResumeUrl = resume_url ?? null;
 
 		const [existingProfiles] = await db.execute(
 			"SELECT * FROM candidate_profiles WHERE user_id = ?",
 			[userId]
 		);
+
+		const normalizedPhone = phone ?? null;
+		const normalizedLocation = location ?? null;
+		const normalizedHeadline = headline ?? null;
+		const normalizedBio = bio ?? null;
+		const normalizedProfilePicture =
+			profile_picture === undefined
+				? existingProfiles[0]?.profile_picture ?? null
+				: profile_picture;
+		const normalizedResumeUrl =
+			resume_url === undefined
+				? existingProfiles[0]?.resume_url ?? null
+				: resume_url;
 
 		const profileValues = [
 			normalizedPhone,
