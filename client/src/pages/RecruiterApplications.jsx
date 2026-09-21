@@ -7,6 +7,7 @@ function RecruiterApplications() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [statusMessage, setStatusMessage] = useState("");
+    const [filterStatus, setFilterStatus] = useState("ALL");
 
     const updateApplicationStatus = async (applicationId, newStatus) => {
         setStatusMessage("");
@@ -49,6 +50,13 @@ function RecruiterApplications() {
         fetchApplications();
     }, []);
 
+    const filteredApplications =
+        filterStatus === "ALL"
+            ? applications
+            : applications.filter(
+                  (application) => application.status === filterStatus
+              );
+
     if (loading) {
         return <p className="p-6 text-gray-700">Loading applications...</p>;
     }
@@ -60,16 +68,34 @@ function RecruiterApplications() {
     return (
         <main className="min-h-screen bg-gray-100 px-4 py-10 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-4xl">
-                <div className="mb-6 flex items-center justify-between gap-4">
+                <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
                     <h1 className="text-3xl font-bold text-gray-800">
                         Recruiter Applications
                     </h1>
-                    <Link
-                        to="/recruiter"
-                        className="text-sm font-medium text-blue-600 hover:text-blue-800"
-                    >
-                        Back to Dashboard
-                    </Link>
+                    <div className="flex flex-wrap items-center gap-4">
+                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                            Status:
+                            <select
+                                value={filterStatus}
+                                onChange={(event) =>
+                                    setFilterStatus(event.target.value)
+                                }
+                                className="rounded border border-gray-300 bg-white px-2 py-1"
+                            >
+                                <option value="ALL">ALL</option>
+                                <option value="SUBMITTED">SUBMITTED</option>
+                                <option value="REVIEWING">REVIEWING</option>
+                                <option value="ACCEPTED">ACCEPTED</option>
+                                <option value="REJECTED">REJECTED</option>
+                            </select>
+                        </label>
+                        <Link
+                            to="/recruiter"
+                            className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                        >
+                            Back to Dashboard
+                        </Link>
+                    </div>
                 </div>
 
                 {statusMessage && (
@@ -82,9 +108,13 @@ function RecruiterApplications() {
                     <p className="rounded-lg bg-white p-6 text-gray-700 shadow-md">
                         No applications found.
                     </p>
+                ) : filteredApplications.length === 0 ? (
+                    <p className="rounded-lg bg-white p-6 text-gray-700 shadow-md">
+                        No applications found for this status.
+                    </p>
                 ) : (
                     <div className="space-y-6">
-                        {applications.map((application) => (
+                        {filteredApplications.map((application) => (
                             <article
                                 key={application.application_id}
                                 className="rounded-lg bg-white p-6 shadow-md"
