@@ -15,6 +15,7 @@ function getStatusClasses(status) {
 
 function MyApplications() {
     const [applications, setApplications] = useState([]);
+    const [filterStatus, setFilterStatus] = useState("ALL");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -35,6 +36,13 @@ function MyApplications() {
         fetchApplications();
     }, []);
 
+    const filteredApplications =
+        filterStatus === "ALL"
+            ? applications
+            : applications.filter(
+                  (application) => application.status === filterStatus
+              );
+
     if (loading) {
         return <p className="p-6 text-gray-700">Loading applications...</p>;
     }
@@ -47,9 +55,27 @@ function MyApplications() {
         <main className="min-h-screen bg-gray-100 px-4 py-10 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-4xl">
                 <div className="mb-6 flex items-center justify-between gap-4">
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        My Applications
-                    </h1>
+                    <div className="flex items-center gap-4">
+                        <h1 className="text-3xl font-bold text-gray-800">
+                            My Applications
+                        </h1>
+                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                            <span>Status</span>
+                            <select
+                                value={filterStatus}
+                                onChange={(event) =>
+                                    setFilterStatus(event.target.value)
+                                }
+                                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700"
+                            >
+                                <option value="ALL">ALL</option>
+                                <option value="SUBMITTED">SUBMITTED</option>
+                                <option value="REVIEWING">REVIEWING</option>
+                                <option value="ACCEPTED">ACCEPTED</option>
+                                <option value="REJECTED">REJECTED</option>
+                            </select>
+                        </label>
+                    </div>
                     <Link
                         to="/candidate"
                         className="text-sm font-medium text-blue-600 hover:text-blue-800"
@@ -62,9 +88,13 @@ function MyApplications() {
                     <p className="rounded-lg bg-white p-6 text-gray-700 shadow-md">
                         No applications found.
                     </p>
+                ) : filteredApplications.length === 0 ? (
+                    <p className="rounded-lg bg-white p-6 text-gray-700 shadow-md">
+                        No applications found for this status.
+                    </p>
                 ) : (
                     <div className="space-y-6">
-                        {applications.map((application) => (
+                        {filteredApplications.map((application) => (
                             <article
                                 key={`${application.job_id}-${application.applied_at}`}
                                 className="rounded-lg bg-white p-6 shadow-md"
