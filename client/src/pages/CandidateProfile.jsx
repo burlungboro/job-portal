@@ -277,6 +277,7 @@ const CandidateProfile = () => {
                             value={profile.phone}
                             onChange={handleChange}
                             className={inputClassName}
+                            maxLength={20}
                         />
                     </div>
 
@@ -291,6 +292,7 @@ const CandidateProfile = () => {
                             value={profile.location}
                             onChange={handleChange}
                             className={inputClassName}
+                            maxLength={150}
                         />
                     </div>
 
@@ -305,6 +307,7 @@ const CandidateProfile = () => {
                             value={profile.headline}
                             onChange={handleChange}
                             className={inputClassName}
+                            maxLength={200}
                         />
                     </div>
 
@@ -319,6 +322,7 @@ const CandidateProfile = () => {
                             onChange={handleChange}
                             className={inputClassName}
                             rows="5"
+                            maxLength={2000}
                         />
                     </div>
 
