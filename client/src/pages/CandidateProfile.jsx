@@ -309,6 +309,9 @@ const CandidateProfile = () => {
                             className={inputClassName}
                             maxLength={200}
                         />
+                        <p className="mt-1 text-right text-sm text-gray-500">
+                            {profile.headline.length} / 200
+                        </p>
                     </div>
 
                     <div>
@@ -324,6 +327,9 @@ const CandidateProfile = () => {
                             rows="5"
                             maxLength={2000}
                         />
+                        <p className="mt-1 text-right text-sm text-gray-500">
+                            {profile.bio.length} / 2000
+                        </p>
                     </div>
 
                     <button
