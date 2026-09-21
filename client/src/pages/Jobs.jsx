@@ -9,6 +9,7 @@ function Jobs() {
     const [keyword, setKeyword] = useState("");
     const [location, setLocation] = useState("");
     const [employmentType, setEmploymentType] = useState("ALL");
+    const [sortBy, setSortBy] = useState("NEWEST");
 
     const filteredJobs = jobs.filter((job) => {
         const keywordValue = keyword.trim().toLowerCase();
@@ -28,6 +29,39 @@ function Jobs() {
             employmentType === "ALL" || job.employment_type === employmentType;
 
         return matchesKeyword && matchesLocation && matchesEmploymentType;
+    });
+
+    const sortedJobs = [...filteredJobs].sort((firstJob, secondJob) => {
+        if (sortBy === "NEWEST" || sortBy === "OLDEST") {
+            const firstDate = new Date(firstJob.created_at).getTime();
+            const secondDate = new Date(secondJob.created_at).getTime();
+            const firstValue = Number.isNaN(firstDate) ? 0 : firstDate;
+            const secondValue = Number.isNaN(secondDate) ? 0 : secondDate;
+
+            return sortBy === "NEWEST"
+                ? secondValue - firstValue
+                : firstValue - secondValue;
+        }
+
+        const salaryField = sortBy === "SALARY_HIGH" ? "salary_max" : "salary_min";
+        const firstSalary = Number(firstJob[salaryField]);
+        const secondSalary = Number(secondJob[salaryField]);
+        const firstHasSalary = firstJob[salaryField] !== null &&
+            firstJob[salaryField] !== undefined &&
+            firstJob[salaryField] !== "" &&
+            !Number.isNaN(firstSalary);
+        const secondHasSalary = secondJob[salaryField] !== null &&
+            secondJob[salaryField] !== undefined &&
+            secondJob[salaryField] !== "" &&
+            !Number.isNaN(secondSalary);
+
+        if (!firstHasSalary && !secondHasSalary) return 0;
+        if (!firstHasSalary) return 1;
+        if (!secondHasSalary) return -1;
+
+        return sortBy === "SALARY_HIGH"
+            ? secondSalary - firstSalary
+            : firstSalary - secondSalary;
     });
 
     useEffect(() => {
@@ -97,6 +131,20 @@ function Jobs() {
                             <option value="CONTRACT">CONTRACT</option>
                         </select>
                     </label>
+
+                    <label className="block text-sm font-medium text-gray-700">
+                        <span className="mb-1 block">Sort by</span>
+                        <select
+                            value={sortBy}
+                            onChange={(event) => setSortBy(event.target.value)}
+                            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                        >
+                            <option value="NEWEST">Newest first</option>
+                            <option value="OLDEST">Oldest first</option>
+                            <option value="SALARY_HIGH">Highest salary first</option>
+                            <option value="SALARY_LOW">Lowest salary first</option>
+                        </select>
+                    </label>
                 </div>
 
                 {jobs.length === 0 ? (
@@ -105,7 +153,7 @@ function Jobs() {
                     <p className="text-gray-700">No jobs match your search.</p>
                 ) : (
                     <div className="grid gap-6 md:grid-cols-2">
-                        {filteredJobs.map((job) => (
+                        {sortedJobs.map((job) => (
                             <Link key={job.id} to={`/jobs/${job.id}`}>
                                 <article className="rounded-lg bg-white p-6 shadow">
                                     <h2 className="mb-2 text-2xl font-semibold text-gray-900">
