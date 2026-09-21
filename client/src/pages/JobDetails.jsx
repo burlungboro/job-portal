@@ -109,22 +109,30 @@ function JobDetails() {
                     Apply for this Job
                 </h2>
 
-                <textarea
-                    className="mb-4 w-full rounded border border-gray-300 p-3 text-gray-700 focus:border-blue-500 focus:outline-none"
-                    rows="6"
-                    value={coverLetter}
-                    onChange={(event) => setCoverLetter(event.target.value)}
-                    placeholder="Write your cover letter"
-                />
+                {job.status === "OPEN" ? (
+                    <>
+                        <textarea
+                            className="mb-4 w-full rounded border border-gray-300 p-3 text-gray-700 focus:border-blue-500 focus:outline-none"
+                            rows="6"
+                            value={coverLetter}
+                            onChange={(event) => setCoverLetter(event.target.value)}
+                            placeholder="Write your cover letter"
+                        />
 
-                <button
-                    type="button"
-                    onClick={handleApply}
-                    disabled={hasApplied}
-                    className="rounded bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700"
-                >
-                    {hasApplied ? "Already Applied" : "Apply for this Job"}
-                </button>
+                        <button
+                            type="button"
+                            onClick={handleApply}
+                            disabled={hasApplied}
+                            className="rounded bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700"
+                        >
+                            {hasApplied ? "Already Applied" : "Apply for this Job"}
+                        </button>
+                    </>
+                ) : (
+                    <p className="text-gray-700">
+                        This job is not open for application.
+                    </p>
+                )}
 
                 {applicationMessage && (
                     <p className="mt-4 text-gray-700">{applicationMessage}</p>
