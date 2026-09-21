@@ -57,6 +57,34 @@ function RecruiterApplications() {
                   (application) => application.status === filterStatus
               );
 
+    const applicationSummary = [
+        { label: "Total Applications", count: applications.length },
+        {
+            label: "Submitted",
+            count: applications.filter(
+                (application) => application.status === "SUBMITTED"
+            ).length,
+        },
+        {
+            label: "Reviewing",
+            count: applications.filter(
+                (application) => application.status === "REVIEWING"
+            ).length,
+        },
+        {
+            label: "Accepted",
+            count: applications.filter(
+                (application) => application.status === "ACCEPTED"
+            ).length,
+        },
+        {
+            label: "Rejected",
+            count: applications.filter(
+                (application) => application.status === "REJECTED"
+            ).length,
+        },
+    ];
+
     if (loading) {
         return <p className="p-6 text-gray-700">Loading applications...</p>;
     }
@@ -103,6 +131,22 @@ function RecruiterApplications() {
                         {statusMessage}
                     </p>
                 )}
+
+                <section className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                    {applicationSummary.map(({ label, count }) => (
+                        <div
+                            key={label}
+                            className="rounded-lg bg-white p-4 shadow-md"
+                        >
+                            <p className="text-sm font-medium text-gray-600">
+                                {label}
+                            </p>
+                            <p className="mt-2 text-2xl font-bold text-gray-800">
+                                {count}
+                            </p>
+                        </div>
+                    ))}
+                </section>
 
                 {applications.length === 0 ? (
                     <p className="rounded-lg bg-white p-6 text-gray-700 shadow-md">
