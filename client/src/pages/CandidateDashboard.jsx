@@ -1,7 +1,54 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../api/axios";
 
 const CandidateDashboard = () => {
     const navigate = useNavigate();
+    const [loadingApplications, setLoadingApplications] = useState(true);
+    const [applicationStats, setApplicationStats] = useState({
+        total: 0,
+        submitted: 0,
+        reviewing: 0,
+        accepted: 0,
+        rejected: 0,
+    });
+
+    useEffect(() => {
+        const fetchApplications = async () => {
+            try {
+                const response = await api.get("/applications");
+                const applications = response.data.applications || [];
+
+                setApplicationStats({
+                    total: applications.length,
+                    submitted: applications.filter(
+                        (application) => application.status === "SUBMITTED"
+                    ).length,
+                    reviewing: applications.filter(
+                        (application) => application.status === "REVIEWING"
+                    ).length,
+                    accepted: applications.filter(
+                        (application) => application.status === "ACCEPTED"
+                    ).length,
+                    rejected: applications.filter(
+                        (application) => application.status === "REJECTED"
+                    ).length,
+                });
+            } catch {
+                setApplicationStats({
+                    total: 0,
+                    submitted: 0,
+                    reviewing: 0,
+                    accepted: 0,
+                    rejected: 0,
+                });
+            } finally {
+                setLoadingApplications(false);
+            }
+        };
+
+        fetchApplications();
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -45,6 +92,36 @@ const CandidateDashboard = () => {
                             Logout
                         </button>
                     </div>
+                </section>
+
+                <section className="mb-8">
+                    {loadingApplications ? (
+                        <p className="rounded-lg bg-white p-6 text-gray-700 shadow-md">
+                            Loading...
+                        </p>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                            {[
+                                ["Total Applications", applicationStats.total],
+                                ["Submitted", applicationStats.submitted],
+                                ["Reviewing", applicationStats.reviewing],
+                                ["Accepted", applicationStats.accepted],
+                                ["Rejected", applicationStats.rejected],
+                            ].map(([label, value]) => (
+                                <article
+                                    key={label}
+                                    className="rounded-lg bg-white p-5 text-center shadow-md"
+                                >
+                                    <p className="text-sm font-medium text-gray-600">
+                                        {label}
+                                    </p>
+                                    <p className="mt-2 text-3xl font-bold text-gray-800">
+                                        {value}
+                                    </p>
+                                </article>
+                            ))}
+                        </div>
+                    )}
                 </section>
 
                 <section className="grid gap-6 md:grid-cols-3">
